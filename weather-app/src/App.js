@@ -42,13 +42,13 @@
       search = (e) => {
         e.preventDefault();
         this.setState({ isLoading: true });
-        fetch(API + this.state.query + API_COUNTRY + API_APPID + API_UNITS)//NOTE: async or await
-        .then(res => res.json())
-        .then((data) => {this.setState({searchResult: data, isLoading: false,}, () => {
-          console.log('state.isLoading: ' + this.state.isLoading)
-          console.log('state.searchresult: ' + this.state.searchResult)})
-        })
-        .catch(console.log)
+        this.callOpenWeatherAPI();
+      }
+
+      async callOpenWeatherAPI(){
+        const response = await fetch(API + this.state.query + API_COUNTRY + API_APPID + API_UNITS);
+        const json = await response.json();
+        this.setState({searchResult: json, isLoading: false});
       }
 
       render(){
