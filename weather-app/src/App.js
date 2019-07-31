@@ -25,12 +25,6 @@
         componentWillMount(){
           this.setState({inputEnabled: false, query: ''});
         }
-
-        componentWillReceiveProps(nextProps){
-          if(nextProps.query !== undefined){
-            console.log('query is not undefined');
-          }
-        }
     
       handleChange = (e) => {
         var newValue = e.target.value.replace(/\D/,'');
@@ -48,7 +42,7 @@
       search = (e) => {
         e.preventDefault();
         this.setState({ isLoading: true });
-        fetch(API + this.state.query + API_COUNTRY + API_APPID + API_UNITS)
+        fetch(API + this.state.query + API_COUNTRY + API_APPID + API_UNITS)//NOTE: async or await
         .then(res => res.json())
         .then((data) => {this.setState({searchResult: data, isLoading: false,}, () => {
           console.log('state.isLoading: ' + this.state.isLoading)
@@ -69,7 +63,6 @@
                 </form>
               </div>
             </div>
-            <br/><br/>
             <div id='centeredDiv'>
               {!this.state.isLoading && <Result searchResult={this.state.searchResult} />}
             </div>
