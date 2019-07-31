@@ -36,7 +36,7 @@
         var newValue = e.target.value.replace(/\D/,'');
         this.setState({[e.target.name]: newValue}, () => {
           if(typeof(this.state.query) !== 'undefined'){
-            if(this.state.query.length >= 5){
+            if(this.state.query.length === 5){
               this.setState({ inputEnabled: true, btnClass: 'btn btn-outline-success btn-rounded btn-sm my-0'});
             } else{
               this.setState({ inputEnabled: false, btnClass: 'btn btn-outline-danger btn-rounded btn-sm my-0'});
