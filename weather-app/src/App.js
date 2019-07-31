@@ -15,27 +15,44 @@
           this.state ={
             query: '',
             searchResult: [],
-            isLoading: true
+            isLoading: true,
+            inputEnabled: false,
+            btnClass: 'btn btn-outline-danger btn-rounded btn-sm my-0'
           };
           this.handleChange = this.handleChange.bind(this);
         }
+
+        componentWillMount(){
+          this.setState({inputEnabled: false, query: ''});
+        }
+
+        componentWillReceiveProps(nextProps){
+          if(nextProps.query !== undefined){
+            console.log('query is not undefined');
+          }
+        }
     
       handleChange = (e) => {
-        this.setState({
-            [e.target.name]: e.target.value
-        })
+        var newValue = e.target.value.replace(/\D/,'');
+        this.setState({[e.target.name]: newValue}, () => {
+          if(typeof(this.state.query) !== 'undefined'){
+            if(this.state.query.length >= 5){
+              this.setState({ inputEnabled: true, btnClass: 'btn btn-outline-success btn-rounded btn-sm my-0'});
+            } else{
+              this.setState({ inputEnabled: false, btnClass: 'btn btn-outline-danger btn-rounded btn-sm my-0'});
+            }
+          }
+        });
     }
 
       search = (e) => {
         e.preventDefault();
-        console.log('search was called');
-        console.log("state.query val in search: " + this.state.query);
         this.setState({ isLoading: true });
         fetch(API + this.state.query + API_COUNTRY + API_APPID + API_UNITS)
         .then(res => res.json())
         .then((data) => {this.setState({searchResult: data, isLoading: false,}, () => {
-          console.log("state.isLoading: " + this.state.isLoading)
-          console.log("state.searchresult: " + this.state.searchResult)})
+          console.log('state.isLoading: ' + this.state.isLoading)
+          console.log('state.searchresult: ' + this.state.searchResult)})
         })
         .catch(console.log)
       }
@@ -44,16 +61,16 @@
         return(
           <div>
             <BackgroundImage />
-            <div class="row">
-              <div class="col-lg-2 col-centered">
-                <form className="form-inline mr-auto">
-                  <input name="query" className="form-control mr-sm-2" type="text" ref={el => this.element = el} onChange={e => this.handleChange(e)} placeholder="Zip Code..." aria-label="Search by Zip"/>
-                  <button className="btn btn-outline-success btn-rounded btn-sm my-0" onClick={this.search.bind(this)} type="submit">Search</button>
+            <div className='row'>
+              <div className='col-lg-2 col-centered'>
+                <form className='form-inline mr-auto'>
+                  <input name='query' className='form-control mr-sm-2' type='text' ref={el => this.element = el} value={this.state.query} onChange={e => this.handleChange(e)} placeholder='Zip Code...' aria-label='Search by Zip'/>
+                  <button disabled={!this.state.inputEnabled} className={this.state.btnClass} onClick={this.search.bind(this)} type='submit'>Search</button>
                 </form>
               </div>
             </div>
             <br/><br/>
-            <div id="centeredDiv">
+            <div id='centeredDiv'>
               {!this.state.isLoading && <Result searchResult={this.state.searchResult} />}
             </div>
           </div>
